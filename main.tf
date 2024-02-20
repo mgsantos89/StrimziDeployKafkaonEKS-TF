@@ -104,7 +104,44 @@ resource "kubernetes_job" "kafka_producer_job" {
   depends_on = [null_resource.wait_cluster_ready]
 }
 
+resource "kubernetes_deployment" "kafka_consumer_deployment" {
+  metadata {
+    name = "kafka-consumer-deployment"
+    namespace = "application"
+  }
 
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "kafka-consumer"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "kafka-consumer"
+        }
+      }
+
+      spec {
+        container {
+          name  = "kafka-consumer-container"
+          image = "strimzi/kafka:latest" # Imagem do Kafka do Strimzi que contém o kafka-console-consumer
+          command = ["bin/kafka-console-consumer.sh"]
+          args = [
+            "--bootstrap-server", "my-cluster-kafka-brokers:9092",  # Endereço do bootstrap server
+            "--topic", "app-topic",  # Substitua "my-topic" pelo nome do tópico que você criou
+            "--from-beginning"  # Começar a ler a partir do início do tópico
+          ]
+        }
+      }
+    }
+  }
+  depends_on = [null_resource.wait_cluster_ready]
+}
 
 
 
