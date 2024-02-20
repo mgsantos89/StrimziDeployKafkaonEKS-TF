@@ -1,0 +1,16 @@
+# Arquivos de estado do Terraform
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+
+# Arquivos temporários do Terraform
+.terraform/
+
+# Arquivos de plano de execução do Terraform
+plan
+dplan
+# Arquivos de backup criados pelo editor de texto
+*~
+
+# Arquivos de log
+*.log
