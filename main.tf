@@ -143,7 +143,45 @@ resource "kubernetes_deployment" "kafka_consumer_deployment" {
   depends_on = [null_resource.wait_cluster_ready]
 }
 
+resource "kubernetes_deployment" "kafka_ui_deployment" {
+  metadata {
+    name = "kafka-ui-deployment"
+    namespace = "application"
+  }
 
+  spec {
+    replicas = 1
+
+    selector {
+      match_labels = {
+        app = "kafka-ui"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          app = "kafka-ui"
+        }
+      }
+
+      spec {
+        container {
+          name  = "kafka-ui-container"
+          image = "provectuslabs/kafka-ui:latest" # Imagem do Kafka UI do ProvectusLab
+          port {
+            container_port = 8080 # Porta em que o Kafka UI será acessível
+          }
+          env {
+            name  = "DYNAMIC_CONFIG_ENABLED"
+            value = "true"
+          }
+        }
+      }
+    }
+  }
+  depends_on = [null_resource.wait_cluster_ready]
+}
 
 
 
